@@ -1,0 +1,17 @@
+# Define the product code of the application to uninstall
+$ProductCode2 = "{ANOTHER-PRODUCT-CODE-HERE}"
+
+# Get a list of all user profiles on the system
+$UserProfiles = Get-ChildItem -Path "C:\Users" -Directory
+
+foreach ($UserProfile in $UserProfiles) {
+    # Construct the path to the per-user registry key for installed applications
+    $RegistryPath2 = "HKU\$($UserProfile.SID)\Software\Microsoft\Windows\CurrentVersion\Uninstall\$ProductCode2"
+    
+    # Check if the application is installed for the current user profile by checking the registry
+    if (Test-Path -Path $RegistryPath2) {
+        # Uninstall the application silently using MsiExec.exe
+        Write-Output "Uninstalling application ($ProductCode2) for $($UserProfile.Name)"
+        Start-Process -FilePath "MsiExec.exe" -ArgumentList "/x $ProductCode2 /qn" -Wait
+    }
+}

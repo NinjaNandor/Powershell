@@ -1,0 +1,14 @@
+# Get a list of all user profiles on the system
+$UserProfiles = Get-ChildItem -Path "C:\Users" -Directory
+
+foreach ($UserProfile in $UserProfiles) {
+    # Construct the path to the installation folder for the application
+    $AppPath = Join-Path -Path $UserProfile.FullName -ChildPath "AppData\Local\Programs\teamwork"
+    
+    # Check if the application folder exists for the current user profile
+    if (Test-Path -Path $AppPath -PathType Container) {
+        # Remove the application folder
+        Write-Output "Removing application folder ($AppPath) for $($UserProfile.Name)"
+        Remove-Item -Path $AppPath -Recurse -Force
+    }
+}
